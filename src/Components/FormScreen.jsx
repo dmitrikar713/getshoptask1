@@ -1,25 +1,27 @@
+import { Link, useNavigate } from 'react-router-dom'
+import bg from '../Assets/promozone.png'
+import closeButtonImg from '../Assets/closeButton.svg'
+import { useRef, useEffect, useState } from 'react'
+
+import InputMask from 'react-input-mask';
+//КОМПОНЕНТ INPUTMASK ПОЗВОЛЯЕТ СОХРАНЯТЬ МАСКУ ПРИ ВВОДЕ ТЕЛЕФОНА НАПРЯМУЮ В ИНПУТ
 
 import classes from './FormScreen.module.css'
-import { Link } from 'react-router-dom'
-import bg from '../Assets/promozone.png'
-import { useState, useRef, useEffect, useFocus, focus } from 'react'
-import InputMask from 'react-input-mask';
+// CSS-МОДУЛИ
+
+
+export default function FormScreen() {
 
 
 
-export default function FormScreen(props) {
-
-  useEffect(() => {
-    window.addEventListener('keydown', keyPressed)
-    window.addEventListener('mousemove', mouseMoved)
-  },
-    []
-  )
-
-  const mouseMoved = () {
-    
+  //СНИМАЕМ СТИЛИ, ПРИМЕНЯЕМЫЕ К ВЫБРАННЫМ СТРЕЛКОЙ КНОПКАМ, КОГДА ДВИГАЕМ МЫШКОЙ
+  const mouseMoved = () => {
+    if (document.activeElement.id !== inputRef.current.props.id) {
+      document.activeElement.blur();
+    }
   }
-  let curDigit = 4, arr = []
+
+  //ДОБАВЛЯЕМ РЕФЫ ДЛЯ КНОПОК И СТЕЙТЫ ДЛЯ ВАЛИДАЦИИ
   const
     inputRef = useRef(),
     digit1Ref = useRef(),
@@ -34,8 +36,45 @@ export default function FormScreen(props) {
     backSpaceRef = useRef(),
     digit0Ref = useRef(),
     submitRef = useRef(),
-    checkboxRef = useRef();
+    closeButtonRef = useRef(),
+    checkboxRef = useRef(),
+    [allValid, setAllValid] = useState(false),
+    [numberValid, setNumberValid] = useState(true),
+    [checkBoxValid, setCheckBoxValid] = useState(false)
+  let navigate = useNavigate()
 
+  // ДОБАВЛЯЕМ EVENTLISTENER-Ы ЧЕРЕЗ USEEFFECT С ПУСТЫМ МАССИВОМ ВО ВТОРОМ АРГУМЕНТЕ, ЧТОБЫ НЕ ДЕЛАТЬ ЭТО КАЖДЫЙ РАЗ ПРИ РЕРЕНДЕРЕ СТРАНИЦЫ
+  useEffect(() => {
+    window.addEventListener('keydown', keyHandler)
+    window.addEventListener('mousemove', mouseMoved)
+  },
+    []
+  )
+
+
+
+
+  useEffect(() => {
+    console.log(checkBoxValid + ' checkbox')
+    console.log(!inputRef.current.value.includes('_') + ' number')
+    // if (numberValid && checkBoxValid)    console.log('checkboxEFFECTCHANGED')
+    if (!inputRef.current.value.includes('_') && checkBoxValid) {
+
+      setAllValid(true)
+    }
+    else setAllValid(false)
+
+
+    console.log(checkBoxValid + ' checkbox')
+    console.log(!inputRef.current.value.includes('_') + ' number')
+  },
+    [checkBoxValid, numberValid]
+  )
+
+
+
+  //МАССИВ, "ЭМУЛИРУЮЩИЙ" СЕТКУ ТИПА GRID, ДЛЯ УДОБНОЙ НАВИГАЦИИ ПО ЭЛЕМЕНТАМ СТРЕЛКАМИ
+  //КАЖДЫЙ ПОДМАССИВ МАССИВА - СТРОКА, СОДЕРЖАЩАЯ 3 ЭЛЕМЕНТА (3 КОЛОНКИ) 
   const buttonsArr = [
     [digit1Ref, digit2Ref, digit3Ref],
     [digit4Ref, digit5Ref, digit6Ref],
@@ -45,68 +84,77 @@ export default function FormScreen(props) {
     [submitRef, submitRef, submitRef]
   ]
 
-  let rowColumn = {
+  // ОБЪЕКТ, ХРАНЯЩИЙ ДАННЫЕ О СТРОКЕ И КОЛОНКЕ АКТИВНОГО ЭЛЕМЕНТА 
+  let activeButtonPos = {
     row: 0,
     column: 2
   }
 
-  let activeButton = digit1Ref;
-  const findCurDigit = () => {
-    arr = inputRef.current.value.split('')
-    all: for (let i = 0; i < arr.length; i++) {
-      curDigit = i;
-      if (arr[i] == '_') {
-        break all;
-      }
-    }
-    // console.log(curDigit);
-  }
-
+  //ФУНКЦИЯ ДОБАВЛЯЕТ ЦИФРУ В ПЕРВЫЙ ПУСТОЙ СИМВОЛ (ЕСЛИ ТЕЛЕФОН НЕ ЗАПОЛНЕН)
+  let curDigit = 4, arr = []
   const addDigit = function (x) {
     if (inputRef.current.value.includes('_')) {
-      findCurDigit()
+      arr = inputRef.current.value.split('')
+      for (let i = 0; i < arr.length; i++) {
+        curDigit = i;
+        setNumberValid(i)
+        if (arr[i] == '_') {
+          break;
+        }
+      }
       inputRef.current.setInputValue(inputRef.current.value.slice(0, curDigit) + x + inputRef.current.value.slice(curDigit + 1))
-      curDigit++
     }
   }
 
+  //ИЩЕМ ПОСЛЕДНЮЮ ЦИФРУ И УДАЛЯЕМ (МЕНЯЕМ НА '_')
   const backSpace = function () {
     arr = inputRef.current.value.split('')
-    all: for (let i = (arr.length - 1); i > 2; i--) {
+    for (let i = (arr.length - 1); i > 2; i--) {
       if (!isNaN(arr[i])) {
         console.log('backspaceFunctionLog')
         inputRef.current.setInputValue(inputRef.current.value.slice(0, i) + '_' + inputRef.current.value.slice(i + 1))
-        break all;
+        break;
       }
     }
+    setNumberValid(2)
   }
 
 
-  const keyPressed = (targetKey) => {
+  // СВИТЧ ПРИ ВВОДЕ С КЛАВИАТУРЫ
+  const keyHandler = (targetKey) => {
     console.log(targetKey.key)
     switch (targetKey.key) {
+
+
+      //СТРЕЛКИ. МЕНЯЕМ РЯД/КОЛОНКУ АКТИВНОЙ КНОПКИ (НЕ ДАЛЬШЕ КРАЙНЕЙ) И ФОКУСИРУЕМСЯ НА НЕЙ
       case 'ArrowLeft':
-        if (rowColumn.column != 0) rowColumn.column--;
-        buttonsArr[rowColumn.row][rowColumn.column].current.focus()
+        if (activeButtonPos.column != 0) activeButtonPos.column--;
+        buttonsArr[activeButtonPos.row][activeButtonPos.column].current.focus()
         break;
       case 'ArrowUp':
-        if (rowColumn.row != 0) rowColumn.row--;
-        buttonsArr[rowColumn.row][rowColumn.column].current.focus()
+        if (activeButtonPos.row != 0) activeButtonPos.row--;
+        buttonsArr[activeButtonPos.row][activeButtonPos.column].current.focus()
         break;
       case 'ArrowRight':
-        if (rowColumn.column != 2) rowColumn.column++;
-        if (rowColumn.row == 3 && rowColumn.column != 2) rowColumn.column++;
-        buttonsArr[rowColumn.row][rowColumn.column].current.focus()
+        if (activeButtonPos.column != 3) activeButtonPos.column++;
+        if (activeButtonPos.row == 3 && activeButtonPos.column != 2) activeButtonPos.column++;
+        buttonsArr[activeButtonPos.row][activeButtonPos.column].current.focus()
         break;
       case 'ArrowDown':
-        if (rowColumn.row != 5) rowColumn.row++;
-        buttonsArr[rowColumn.row][rowColumn.column].current.focus()
+        if (activeButtonPos.row != 5) activeButtonPos.row++;
+        buttonsArr[activeButtonPos.row][activeButtonPos.column].current.focus()
         break;
+
+
+      //BACKSPACE. УДАЛЯЕМ 1 ЦИФРУ, ЕСЛИ ПОЛЕ ИНПУТА НЕ В ФОКУСЕ
       case 'Backspace':
         if (document.activeElement.id !== inputRef.current.props.id) {
           backSpace()
         }
         break;
+
+
+      //ЦИФРЫ. ДОБАВЛЯЕМ, ЕСЛИ ИНПУТ НЕ В ФОКУСЕ
       case '1':
       case '2':
       case '3':
@@ -117,24 +165,36 @@ export default function FormScreen(props) {
       case '8':
       case '9':
       case '0':
-        if (document.activeElement.id !== inputRef.current.props.id) {         
-        addDigit(targetKey.key)
+        if (document.activeElement.id !== inputRef.current.props.id) {
+          addDigit(targetKey.key)
         }
         break;
+
+      //ENTER: КЛИКАЕМ НА ЧЕКБОКС, ЕСЛИ ОН В ФОКУСЕ
       case 'Enter':
-        if (rowColumn.row == 4){
-        buttonsArr[rowColumn.row][rowColumn.column].current.click()
-      }
+        if (activeButtonPos.row == 4) {
+          buttonsArr[activeButtonPos.row][activeButtonPos.column].current.click()
+        }
         break;
+
       default: break;
     }
   }
+
+  const closeButton = () => {
+    navigate('/')
+  }
+
+
+  // КОНСОЛЬНЫЕ ТЕСТЫ
+  // console.log(inputRef)
 
   return (
 
     <div className={classes.wrapper}>
       <div className={classes.content}>
         <div className={classes.form__wrapper}>
+
           <div className={classes.form__content}>
             <p className={classes.header}>Введите ваш номер мобильного телефона</p>
 
@@ -144,28 +204,35 @@ export default function FormScreen(props) {
 
 
             <div className={classes.nums}>
-              <button ref={digit1Ref}  onClick={() => addDigit(1)}>1</button>
-              <button ref={digit2Ref}  onClick={() => addDigit(2)}>2</button>
-              <button ref={digit3Ref}  onClick={() => addDigit(3)}>3</button>
-              <button ref={digit4Ref}  onClick={() => addDigit(4)}>4</button>
-              <button ref={digit5Ref}  onClick={() => addDigit(5)}>5</button>
-              <button ref={digit6Ref}  onClick={() => addDigit(6)}>6</button>
-              <button ref={digit7Ref}  onClick={() => addDigit(7)}>7</button>
-              <button ref={digit8Ref}  onClick={() => addDigit(8)}>8</button>
-              <button ref={digit9Ref}  onClick={() => addDigit(9)}>9</button>
-              <button ref={backSpaceRef}  className={classes.backSpace} onClick={() => backSpace()}>СТЕРЕТЬ</button>
-              <button ref={digit0Ref}  onClick={() => addDigit(0)}>0</button>
+              <button ref={digit1Ref} onClick={() => addDigit(1)}>1</button>
+              <button ref={digit2Ref} onClick={() => addDigit(2)}>2</button>
+              <button ref={digit3Ref} onClick={() => addDigit(3)}>3</button>
+              <button ref={digit4Ref} onClick={() => addDigit(4)}>4</button>
+              <button ref={digit5Ref} onClick={() => addDigit(5)}>5</button>
+              <button ref={digit6Ref} onClick={() => addDigit(6)}>6</button>
+              <button ref={digit7Ref} onClick={() => addDigit(7)}>7</button>
+              <button ref={digit8Ref} onClick={() => addDigit(8)}>8</button>
+              <button ref={digit9Ref} onClick={() => addDigit(9)}>9</button>
+              <button ref={backSpaceRef} className={classes.backSpace} onClick={() => backSpace()}>СТЕРЕТЬ</button>
+              <button ref={digit0Ref} onClick={() => addDigit(0)}>0</button>
             </div>
             <div className={classes.agreement}>
-              <input ref={checkboxRef} type="checkbox" className={classes.checkbox} />
+              <input ref={checkboxRef} type="checkbox" className={classes.checkbox} onChange={() => setCheckBoxValid(!checkBoxValid)} />
               <p>Согласие на обработку<br />персональных данных</p>
             </div>
-            <button ref={submitRef} className={classes.sumbit}>Подтвердить номер</button>
+            <button ref={submitRef} className={classes.sumbit} disabled={!allValid} onClick={() => { navigate('/thankyou') }}>Подтвердить номер</button>
+
+
           </div>
         </div>
         <div className={classes.background}>
           <img src={bg} alt="" />
         </div>
+
+        <div ref={closeButtonRef} className={classes.closeButton} onClick={() => closeButton()}>
+          <img src={closeButtonImg} alt="" />
+        </div>
+
       </div>
     </div>
   )
