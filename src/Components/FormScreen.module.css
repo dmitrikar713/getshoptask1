@@ -1,5 +1,3 @@
-
-
 .wrapper {
   display: flex;
   min-height: 100vh;
@@ -148,28 +146,28 @@ border-radius: 0;
 
 .customcheckbox:checked+label::before {
   background-image: url("../Assets/check.svg");
+  box-shadow: 0 0 0 3PX  rgb(0, 0, 0);
 }
 
 /* стили при наведении курсора на checkbox */
 .customcheckbox:not(:disabled):not(:checked)+label:hover::before {
-  border-color: #000000;
+
+  box-shadow: 0 0 0 3PX  rgb(0, 0, 0);
+  border: 2px solid #000000;
 }
 /* стили для активного состояния чекбокса (при нажатии на него) */
 .customcheckbox:not(:disabled):active+label::before {
   background-color: #b3d7ff;
-  border-color: #000000;
+
+  border: 2px solid #000000;
 }
 /* стили для чекбокса, находящегося в фокусе */
 .customcheckbox:focus+label::before {
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  box-shadow: 0 0 0 3PX  rgb(0, 0, 0);
 }
 /* стили для чекбокса, находящегося в фокусе и не находящегося в состоянии checked */
 .customcheckbox:focus:not(:checked)+label::before {
-  border-color: #000000;
-}
-/* стили для чекбокса, находящегося в состоянии disabled */
-.customcheckbox:disabled+label::before {
-  background-color: #e9ecef;
+  box-shadow: 0 0 0 3PX  rgb(0, 0, 0);
 }
 
 .agreement p {
@@ -199,8 +197,6 @@ border-radius: 0;
   border: solid 2px #4E4E4E;
 }
 
-
-
 .closeButton {
   background-image: url("../Assets/closeButton.svg");
   z-index: 5;
@@ -215,4 +211,3 @@ border-radius: 0;
 .closeButton:hover, .closeButton:focus {  
   background-image: url("../Assets/closeButtonHover.svg");
 }
-

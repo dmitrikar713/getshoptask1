@@ -183,6 +183,7 @@ export default function FormScreen() {
     }
   }
 
+  // EXIT
   const closeButton = () => {
     navigate('/')
   }
