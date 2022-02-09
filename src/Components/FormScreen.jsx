@@ -53,17 +53,14 @@ export default function FormScreen() {
 
 
 
-
   useEffect(() => {
     console.log(checkBoxValid + ' checkbox')
     console.log(!inputRef.current.value.includes('_') + ' number')
-    // if (numberValid && checkBoxValid)    console.log('checkboxEFFECTCHANGED')
     if (!inputRef.current.value.includes('_') && checkBoxValid) {
-
       setAllValid(true)
     }
-    else setAllValid(false)
-
+    else {      
+      setAllValid(false)}
 
     console.log(checkBoxValid + ' checkbox')
     console.log(!inputRef.current.value.includes('_') + ' number')
@@ -72,17 +69,18 @@ export default function FormScreen() {
   )
 
 
-
   //МАССИВ, "ЭМУЛИРУЮЩИЙ" СЕТКУ ТИПА GRID, ДЛЯ УДОБНОЙ НАВИГАЦИИ ПО ЭЛЕМЕНТАМ СТРЕЛКАМИ
   //КАЖДЫЙ ПОДМАССИВ МАССИВА - СТРОКА, СОДЕРЖАЩАЯ 3 ЭЛЕМЕНТА (3 КОЛОНКИ) 
+
+
   const buttonsArr = [
-    [digit1Ref, digit2Ref, digit3Ref],
-    [digit4Ref, digit5Ref, digit6Ref],
-    [digit7Ref, digit8Ref, digit9Ref],
-    [backSpaceRef, backSpaceRef, digit0Ref],
-    [checkboxRef, checkboxRef, checkboxRef],
-    [submitRef, submitRef, submitRef]
-  ]
+    [digit1Ref, digit2Ref, digit3Ref, closeButtonRef],
+    [digit4Ref, digit5Ref, digit6Ref, closeButtonRef],
+    [digit7Ref, digit8Ref, digit9Ref, closeButtonRef],
+    [backSpaceRef, backSpaceRef, digit0Ref, closeButtonRef],
+    [checkboxRef, checkboxRef, checkboxRef, closeButtonRef],
+    [submitRef, submitRef, submitRef, closeButtonRef]
+  ] 
 
   // ОБЪЕКТ, ХРАНЯЩИЙ ДАННЫЕ О СТРОКЕ И КОЛОНКЕ АКТИВНОГО ЭЛЕМЕНТА 
   let activeButtonPos = {
@@ -130,19 +128,23 @@ export default function FormScreen() {
       case 'ArrowLeft':
         if (activeButtonPos.column != 0) activeButtonPos.column--;
         buttonsArr[activeButtonPos.row][activeButtonPos.column].current.focus()
+        console.log(buttonsArr[activeButtonPos.row][activeButtonPos.column].current)
         break;
       case 'ArrowUp':
         if (activeButtonPos.row != 0) activeButtonPos.row--;
         buttonsArr[activeButtonPos.row][activeButtonPos.column].current.focus()
+        console.log(buttonsArr[activeButtonPos.row][activeButtonPos.column].current)
         break;
       case 'ArrowRight':
         if (activeButtonPos.column != 3) activeButtonPos.column++;
         if (activeButtonPos.row == 3 && activeButtonPos.column != 2) activeButtonPos.column++;
         buttonsArr[activeButtonPos.row][activeButtonPos.column].current.focus()
+        console.log(buttonsArr[activeButtonPos.row][activeButtonPos.column].current)
         break;
       case 'ArrowDown':
         if (activeButtonPos.row != 5) activeButtonPos.row++;
         buttonsArr[activeButtonPos.row][activeButtonPos.column].current.focus()
+        console.log(buttonsArr[activeButtonPos.row][activeButtonPos.column].current)
         break;
 
 
@@ -186,9 +188,6 @@ export default function FormScreen() {
   }
 
 
-  // КОНСОЛЬНЫЕ ТЕСТЫ
-  // console.log(inputRef)
-
   return (
 
     <div className={classes.wrapper}>
@@ -217,7 +216,7 @@ export default function FormScreen() {
               <button ref={digit0Ref} onClick={() => addDigit(0)}>0</button>
             </div>
             <div className={classes.agreement}>
-              <input ref={checkboxRef} type="checkbox" className={classes.checkbox} onChange={() => setCheckBoxValid(!checkBoxValid)} />
+              <input ref={checkboxRef} type="checkbox" className={classes.customcheckbox} onChange={() => setCheckBoxValid(!checkBoxValid)} id='happy' /><label for="happy"></label>
               <p>Согласие на обработку<br />персональных данных</p>
             </div>
             <button ref={submitRef} className={classes.sumbit} disabled={!allValid} onClick={() => { navigate('/thankyou') }}>Подтвердить номер</button>
@@ -229,9 +228,8 @@ export default function FormScreen() {
           <img src={bg} alt="" />
         </div>
 
-        <div ref={closeButtonRef} className={classes.closeButton} onClick={() => closeButton()}>
-          <img src={closeButtonImg} alt="" />
-        </div>
+
+        <button ref={closeButtonRef} className={classes.closeButton} onClick={() => navigate('/')} />
 
       </div>
     </div>

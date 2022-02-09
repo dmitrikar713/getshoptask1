@@ -12,9 +12,76 @@
   vertical-align: center;
   border-radius: 5px;
   box-shadow: 0 0 200px 0px rgb(214, 214, 214);
+  position: relative;
 }
 
 video {
   height: 100%;
   width: 100%;
+}
+
+.goButton {
+  z-index: 1;
+  position: absolute;  
+  background-color: red;
+  top: 175px;
+  right: 20px;
+  background-image: url("../Assets/closeButtonHover.svg");
+  animation: appear 1s 5s ease-in;
+  opacity: 100%;
+
+  -webkit-animation: roll-in-blurred-left 0.65s cubic-bezier(0.230, 1.000, 0.320, 1.000) 5s both;
+  animation: roll-in-blurred-left 0.65s cubic-bezier(0.230, 1.000, 0.320, 1.000) 5s both;
+
+}
+
+
+@-webkit-keyframes roll-in-blurred-left {
+  0% {
+    -webkit-transform: translateX(-1000px) rotate(-720deg);
+            transform: translateX(-1000px) rotate(-720deg);
+    -webkit-filter: blur(50px);
+            filter: blur(50px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateX(0) rotate(0deg);
+            transform: translateX(0) rotate(0deg);
+    -webkit-filter: blur(0);
+            filter: blur(0);
+    opacity: 1;
+  }
+}
+@keyframes roll-in-blurred-left {
+  0% {
+    -webkit-transform: translateX(-1000px) rotate(-720deg);
+            transform: translateX(-1000px) rotate(-720deg);
+    -webkit-filter: blur(50px);
+            filter: blur(50px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateX(0) rotate(0deg);
+            transform: translateX(0) rotate(0deg);
+    -webkit-filter: blur(0);
+            filter: blur(0);
+    opacity: 1;
+  }
+}
+
+
+
+
+
+
+
+.goButton img {
+  position: absolute;
+  object-fit: contain;
+  background-color: rgb(255, 255, 255);
+  top: 0;
+  right: 0;
+}
+.goButton:hover, .goButton:focus  {
+cursor: pointer;
 }

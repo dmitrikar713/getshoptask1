@@ -1,6 +1,4 @@
-.wrapper * {
-  box-shadow: 0 0 0 1px red;
-}
+
 
 .wrapper {
   display: flex;
@@ -15,7 +13,6 @@
   background-color: rgb(245, 245, 245);
   vertical-align: center;
   border-radius: 5px;
-  box-shadow: 0 0 200px 0px rgb(214, 214, 214);
   position: relative;
 }
 
@@ -27,6 +24,7 @@
 }
 
 .form__wrapper {
+  margin-top: 1px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -73,14 +71,14 @@
   color: white;
   background-color: black !important;
 }
-button:hover {
+.nums button:hover {
   background-color: rgb(0, 0, 0);
   color: white;
   border: solid 2px black;
   border-radius: 0;
 }
 
-button:focus {
+.nums button:focus {
 background-color: rgb(0, 0, 0);
 color: white;
 border: solid 2px black;
@@ -115,20 +113,63 @@ border-radius: 0;
 
 .agreement {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 20px;
   height: 52px;
 }
 
-.checkbox {
-  background-color: #5e1d1d;
-  border: 1px solid #00ffff;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05);
-  padding: 9px;
-  border-radius: 3px;
+.customcheckbox {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+}
+
+.customcheckbox+label {
+  display: inline-flex;
+  align-items: center;
+  user-select: none;
+}
+
+.customcheckbox+label::before {
+  content: '';
   display: inline-block;
-  position: relative;
+  height: 40px;
+  width: 40px;
+  flex-shrink: 0;
+  flex-grow: 0;
+  border: 2px solid #000000;
+  margin-right: 10px;
+  margin-left: 10px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 50% 50%;
+}
+
+.customcheckbox:checked+label::before {
+  background-image: url("../Assets/check.svg");
+}
+
+/* стили при наведении курсора на checkbox */
+.customcheckbox:not(:disabled):not(:checked)+label:hover::before {
+  border-color: #000000;
+}
+/* стили для активного состояния чекбокса (при нажатии на него) */
+.customcheckbox:not(:disabled):active+label::before {
+  background-color: #b3d7ff;
+  border-color: #000000;
+}
+/* стили для чекбокса, находящегося в фокусе */
+.customcheckbox:focus+label::before {
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+/* стили для чекбокса, находящегося в фокусе и не находящегося в состоянии checked */
+.customcheckbox:focus:not(:checked)+label::before {
+  border-color: #000000;
+}
+/* стили для чекбокса, находящегося в состоянии disabled */
+.customcheckbox:disabled+label::before {
+  background-color: #e9ecef;
 }
 
 .agreement p {
@@ -144,43 +185,34 @@ border-radius: 0;
   line-height: 19px;
   text-align: center;
   text-transform: uppercase;
-  color: #4E4E4E;
   padding: 12px 19px;
-  background-color: inherit;
-  border: solid 2px black;
+  cursor: pointer;
+
+  background-color: #000000;
+  border: solid 2px #000000;
+  color: #fffbfb;
 }
 
 .sumbit:disabled {
-  background-color: red;
+  color: #4E4E4E;
+  background-color: inherit;
+  border: solid 2px #4E4E4E;
 }
+
+
 
 .closeButton {
-  z-index: 1;
+  background-image: url("../Assets/closeButton.svg");
+  z-index: 5;
+  width: 88px;
+  height: 52px;
   position: absolute;  
-  background-color: red;
   top: 20px;
   right: 20px;
+  border: 0;
+}
+
+.closeButton:hover, .closeButton:focus {  
   background-image: url("../Assets/closeButtonHover.svg");
 }
 
-/* .closeButton img:after {
-  display: block;
-  content: '';
-  width: 200px;
-  height: 200px;
-  z-index: 200;
-  position: absolute;
-  background-image: url("../Assets/closeButtonHover.svg");
-} */
-
-.closeButton img {
-  position: absolute;
-  object-fit: contain;
-  background-color: rgb(255, 255, 255);
-  top: 0;
-  right: 0;
-}
-.closeButton:hover, .closeButton:focus  {
-  -webkit-filter: invert(100%);
-  filter: invert(100%);
-}
